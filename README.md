@@ -1,2 +1,2 @@
 # coolniphp
-A aimple and efficient PHP Framework
+A simple and efficient PHP Framework
