@@ -55,5 +55,3 @@ class Cache
         return self::$prefix.'_'.trim($key);
     }
 }
-
-?>

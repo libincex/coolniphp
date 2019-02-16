@@ -7,12 +7,12 @@
 
 class Config
 {
-	private static $config = array();
-	
-	//配置信息
-	public static function init($config)
-	{
-        if(empty(self::$config)){
+    private static $config = array();
+
+    //配置信息
+    public static function init($config)
+    {
+        if (empty(self::$config)) {
 
             //处理配置项:
             !is_array($config) && $config = array();
@@ -20,27 +20,27 @@ class Config
             //环境设置:
             //======================================
             //设置内存
-            empty($config['memory']) && ini_set('memory_limit',$config['memory']);
+            empty($config['memory']) && ini_set('memory_limit', $config['memory']);
 
             //设置时区
             empty($config['timezone']) && $config['timezone'] = 'Asia/Shanghai';
-            ini_set('date.timezone',$config['timezone']);
+            ini_set('date.timezone', $config['timezone']);
 
             //设置调试
-            define('CLN_IS_DEBUG',(bool)$config['isDebug']);
-            if(CLN_IS_DEBUG){ //开启错误显示
+            define('CLN_IS_DEBUG', (bool)$config['isDebug']);
+            if (CLN_IS_DEBUG) { //开启错误显示
                 error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR | E_RECOVERABLE_ERROR);
-                ini_set('display_errors','ON');
-            }else{ //屏蔽所有错误信息
+                ini_set('display_errors', 'ON');
+            } else { //屏蔽所有错误信息
                 error_reporting(0);
-                ini_set('display_errors','OFF');
+                ini_set('display_errors', 'OFF');
             }
 
             //应用设置:
             //======================================
 
             //应用ID
-            define('CLN_ID',trim($config['AppID']));
+            define('CLN_ID', trim($config['AppID']));
 
             //路径配置:
             //控制器程序路径
@@ -49,22 +49,22 @@ class Config
             $config['viewPath'] = realpath(trim($config['viewPath']));
             //类库文件路径 兼容单值 与 多值
             !is_array($config['libPath']) && $config['libPath'] = array(trim($config['libPath']));
-            foreach($config['libPath'] as $key=>&$lp){
+            foreach ($config['libPath'] as $key => &$lp) {
                 $lp = realpath(trim($lp));
             }
             $config['libPath'] = array_unique(array_filter($config['libPath']));
 
             //各应用模式私有部分
             //======================================
-            if(CLN_IS_CLI){ //cli模式
+            if (CLN_IS_CLI) { //cli模式
                 //输出缓冲区内容并关闭缓冲
                 ob_end_flush();
 
                 //入口文件路径
                 $files = get_included_files();
-                define('CLN_BASE_URL','php '.$files[0].' ');
+                define('CLN_BASE_URL', 'php ' . $files[0] . ' ');
 
-            }else{ //http模式
+            } else { //http模式
                 //设置程序运行超时
                 $outTime = (int)$config['http']['outTime'];
                 $outTime && set_time_limit($outTime);
@@ -74,15 +74,16 @@ class Config
                 header('X-Powered-By: CoolniPHP');
 
                 //url的协议头
-                define('CLN_HTTP_PROTOCOL',isHttps()?'https://':'http://');
+                define('CLN_HTTP_PROTOCOL', isHttps() ? 'https://' : 'http://');
                 //入口文件url
-                define('CLN_BASE_URL',CLN_HTTP_PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME']);
+                $rootFile = pathinfo($_SERVER['SCRIPT_FILENAME'])['basename'];
+                define('CLN_BASE_URL', CLN_HTTP_PROTOCOL . "{$_SERVER['HTTP_HOST']}/{$rootFile}");
 
                 //静态文件所在的网址目录处理(兼容单值与多值 字符串型 与 数组型(随机获取)
                 $sUrl = $config['route']['sUrl'];
                 !is_array($sUrl) && $sUrl = array($sUrl);
-                foreach($sUrl as &$val){
-                    $val = trim(rtrim(trim($val),'/')); //去掉Url中最后"/"
+                foreach ($sUrl as &$val) {
+                    $val = trim(rtrim(trim($val), '/')); //去掉Url中最后"/"
                 }
                 $config['route']['sUrl'] = array_filter($sUrl); //过滤空元素, 回写
 
@@ -91,55 +92,54 @@ class Config
             //写入配置
             self::$config = $config;
         }
-	}
-	
-	//获取
-	public static function get($key=NULL)
-	{
-		if(!isset($key)){
-			return self::$config;
-		}
-		
-		//1.优先完整名称的参数匹配
-		if(isset(self::$config[$key])){
-			return self::$config[$key];
-		}
-		//2.尝试对名称进行多维化处理
-		$arr = explode('.',$key); //以'.'进行分隔
-		$val = &self::$config;
-		foreach($arr as $k){
-			if(!isset($val[$k])){
-				return NULL;
-			}
-			$val = &$val[$k];
-		}
-		
-		return $val;
-	}
-	
-	//设置
-	public static function set($key,$val)
-	{
-		if(!isset($key)){
-			return false;
-		}
-		
-		//1.优先完整名称的参数匹配
-		if(isset(self::$config[$key])){
-			self::$config[$key] = $val;
-			return true;
-		}
-		//2.尝试对名称进行多维化处理
-		$arr = explode('.',$key); //以'.'进行分隔
-		$config = &self::$config;
-		foreach($arr as $k){
-			!is_array($config[$k]) && $config[$k] = array();
-			$config = &$config[$k];
-		}
-		$config = $val;
-		
-		return true;
-	}
-	
+    }
+
+    //获取
+    public static function get($key = NULL)
+    {
+        if (!isset($key)) {
+            return self::$config;
+        }
+
+        //1.优先完整名称的参数匹配
+        if (isset(self::$config[$key])) {
+            return self::$config[$key];
+        }
+        //2.尝试对名称进行多维化处理
+        $arr = explode('.', $key); //以'.'进行分隔
+        $val = &self::$config;
+        foreach ($arr as $k) {
+            if (!isset($val[$k])) {
+                return NULL;
+            }
+            $val = &$val[$k];
+        }
+
+        return $val;
+    }
+
+    //设置
+    public static function set($key, $val)
+    {
+        if (!isset($key)) {
+            return false;
+        }
+
+        //1.优先完整名称的参数匹配
+        if (isset(self::$config[$key])) {
+            self::$config[$key] = $val;
+            return true;
+        }
+        //2.尝试对名称进行多维化处理
+        $arr = explode('.', $key); //以'.'进行分隔
+        $config = &self::$config;
+        foreach ($arr as $k) {
+            !is_array($config[$k]) && $config[$k] = array();
+            $config = &$config[$k];
+        }
+        $config = $val;
+
+        return true;
+    }
+
 }
-?>

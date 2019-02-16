@@ -157,5 +157,3 @@ abstract class Action
 	}
 	
 }
-
-?>

@@ -778,20 +778,13 @@ function isAjax()
 //当前是否是https协议
 function isHttps()
 {
-    if ((int)$_SERVER['SERVER_PORT'] == 443) {
-        return true;
-    }
-    if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
-        return true;
-    }
-    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
-        return true;
-    }
-    if (!empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
-        return true;
-    }
+    $bool = (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == 'https')
+        || (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS'] == 'on'))
+        || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+        || (isset($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off');
 
-    return false;
+    return $bool;
 }
 
 //当前PHP工作模式是否是CLI

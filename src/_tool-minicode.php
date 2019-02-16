@@ -36,4 +36,3 @@ foreach($data[1] as $d){
 
 //生成文件
 echo file_put_contents(dirname(__FILE__).'/../CoolniPHP.php',$code);
-?>

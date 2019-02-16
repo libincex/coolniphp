@@ -6,12 +6,12 @@
     "coolniphp",
     "framework"
   ],
-  "homepage": "https://www.coolni.cn/",
   "license": "MIT",
   "authors": [
     {
       "name": "Libin",
-      "email": "libincex@163.com"
+      "email": "libincex@163.com",
+      "homepage": "https://www.coolni.cn/"
     }
   ],
   "require": {
