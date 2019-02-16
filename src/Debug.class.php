@@ -94,4 +94,3 @@ class Debug
 		Log::put('debug',$data);
 	}
 }
-?>

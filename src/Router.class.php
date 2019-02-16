@@ -139,13 +139,21 @@ class Router
         $url = self::userRoute();
         if (empty($url)) {
             //处理url,统一url格式
-            $url = trim($_SERVER['REQUEST_URI']);
-            $purl = trim($_SERVER['SCRIPT_NAME']);
-            empty($purl) && $purl = trim($_SERVER['PHP_SELF']);
-
-            if ($purl == mb_substr($url, 0, strlen($purl))) {
+            $url = trim($_SERVER['REQUEST_URI'], " \t\n\r\0\x0B/");
+            $rootFile = pathinfo(trim($_SERVER['SCRIPT_FILENAME'], " \t\n\r\0\x0B/"))['basename'];
+            if ($url == $rootFile) {
+                $url = '';
+            } elseif (!empty($rootFile) && mb_strlen($url) > mb_strlen($rootFile)) {
+                $arr = explode($rootFile, $url);
+                if (count($arr) > 1) {
+                    $url = $arr[1];
+                }
+            }
+            /*
+            if ($purl != $url && $purl == mb_substr($url, 0, mb_strlen($purl))) {
                 $url = substr_replace($url, '', 0, strlen($purl));
             }
+            */
         }
         $url = trim(str_replace(array('/?', '&', '='), array('?', '/', '/'), $url), '/');
         $urlArr = array_map('trim', explode('?', $url));
@@ -182,11 +190,6 @@ class Router
         }
         self::$parameter = $parame + $_POST;
 
-        /*
-        print_r($parame);
-        print_r(self::$info);
-        print_r(self::$parameter);exit;
-        */
         return true;
     }
 
@@ -236,5 +239,3 @@ class Router
     }
 
 }
-
-?>

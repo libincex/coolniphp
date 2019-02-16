@@ -123,4 +123,3 @@ class View
 		return $html;
 	}
 }
-?>

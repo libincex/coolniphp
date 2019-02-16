@@ -1122,5 +1122,3 @@ class DBMysqlTable
     }
 
 }
-
-?>
