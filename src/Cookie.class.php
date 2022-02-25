@@ -8,28 +8,28 @@
 class Cookie
 {
     private static $prefix; //cookie名称前缀
-    private static $cacheCookie = array(); //cookie缓冲(以便实现兼容: 一个执行流程中设置了cookie,又能立即读取)
+    private static $cacheCookie = []; //cookie缓冲(以便实现兼容: 一个执行流程中设置了cookie,又能立即读取)
 
     //初始化
     public static function init()
     {
-        if(!isset(self::$prefix)) {
-           self::$prefix = trim(C('http.cookie.prefix'));
+        if (!isset(self::$prefix)) {
+            self::$prefix = trim(C('http.cookie.prefix'));
         }
     }
 
-	//获取
-	public static function get($name)
-	{
-        $name = self::$prefix.trim($name);
+    //获取
+    public static function get(string $name)
+    {
+        $name = self::$prefix . trim($name);
         $val = $_COOKIE[$name]; //先从$_COOKIE中获取
         empty($val) && $val = self::$cacheCookie[$name]; //再从cacheCookie中获取
 
-		return trim($val);
-	}
+        return trim($val);
+    }
 
     //设置
-    public static function set($name, $value, $expire = 0, $domain = NULL)
+    public static function set(string $name, $value, int $expire = 0, string $domain = NULL)
     {
         $name = self::$prefix . trim($name);
         $expire = (int)$expire;
@@ -47,7 +47,7 @@ class Cookie
     }
 
     //删除
-    public static function del($name)
+    public static function del(string $name)
     {
         return setcookie($name, '', 0, '/');
     }

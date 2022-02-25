@@ -27,7 +27,7 @@ class Language
     //当前使用的语言包
     protected static $lan = 'cn';
     //语言包数据
-    protected static $data = array();
+    protected static $data = [];
 
     //初始化数据
     public static function init()
@@ -43,7 +43,7 @@ class Language
             //载入语言包
             $file = realpath(C('language.path')) . "/{$lan}.php";
             $lanData = include($file);
-            self::$data[self::$lan] = (empty($lanData) || !is_array($lanData)) ? array() : $lanData;
+            self::$data[self::$lan] = (empty($lanData) || !is_array($lanData)) ? [] : $lanData;
         }
 
         return true;
@@ -53,7 +53,7 @@ class Language
     public static function set($language)
     {
         $language = trim($language);
-        if(empty($language)){
+        if (empty($language)) {
             return false;
         }
 
@@ -76,7 +76,7 @@ class Language
     }
 
     //语言转换
-    public static function translate($string, $tplData = array())
+    public static function translate($string, $tplData = [])
     {
         if (!is_string($string)) {
             return $string;

@@ -96,7 +96,7 @@ class Router
         //生成临时key,用于替换填充串
         $tmpKey = 'KEY' . uniqid();
 
-        $arr = array();
+        $arr = [];
         foreach ($urlArr as $key => $val) {
             //判断是否符合
             $pattern = str_replace($tmpKey, '(.*)', preg_quote(preg_replace('/\{.+?\}/i', $tmpKey, $key), '/'));
@@ -104,14 +104,14 @@ class Router
                 continue;
             }
             //获取key
-            $data = array();
+            $data = [];
             preg_match_all('/\{(.+?)\}/i', $key, $data);
-            $parameters = is_array($data[0]) ? $data[0] : array();
+            $parameters = is_array($data[0]) ? $data[0] : [];
 
             //提取值
             preg_match_all("/{$pattern}/i", $url, $data);
             unset($data[0]);
-            $vals = array();
+            $vals = [];
             $i = 0;
             foreach ($data as $d) {
                 if (!isset($parameters[$i])) {
@@ -168,7 +168,7 @@ class Router
         $urlArr[0] = implode('/', $mca);
 
         //2. 获取Get传递的数据
-        $parame = array();
+        $parame = [];
         $urlVal = trim(implode('/', $urlArr), '/');
         if (!empty($urlVal)) {
             $urlVal = array_map('trim', explode('/', $urlVal));
@@ -186,7 +186,7 @@ class Router
         //3. 处理传入的参数(去掉PHP的魔术引号的作用
         if (get_magic_quotes_gpc()) {
             $parame = Security::quote($parame, -1);
-            $_POST = (!is_array($_POST) || empty($_POST)) ? array() : Security::quote($_POST, -1);
+            $_POST = (!is_array($_POST) || empty($_POST)) ? [] : Security::quote($_POST, -1);
         }
         self::$parameter = $parame + $_POST;
 
@@ -208,7 +208,7 @@ class Router
         $path = explode('/', $path);
 
         //4.分析路由
-        $info = array();
+        $info = [];
         //取得模块名
         $module = trim($path[0]);
         !empty($module) && $info['module'] = $module;
@@ -223,7 +223,7 @@ class Router
 
         //处理传入的参数
         unset($path[0], $path[1], $path[2]);
-        $parame = array();
+        $parame = [];
         foreach ($path as $key => $p) {
             if ($key % 2) {
                 //参数名

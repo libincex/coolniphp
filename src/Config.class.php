@@ -7,15 +7,15 @@
 
 class Config
 {
-    private static $config = array();
+    private static $config = [];
 
     //配置信息
-    public static function init($config)
+    public static function init(array $config = [])
     {
         if (empty(self::$config)) {
 
             //处理配置项:
-            !is_array($config) && $config = array();
+            !is_array($config) && $config = [];
 
             //环境设置:
             //======================================
@@ -95,7 +95,7 @@ class Config
     }
 
     //获取
-    public static function get($key = NULL)
+    public static function get(string $key = NULL)
     {
         if (!isset($key)) {
             return self::$config;
@@ -119,7 +119,7 @@ class Config
     }
 
     //设置
-    public static function set($key, $val)
+    public static function set(string $key, $val)
     {
         if (!isset($key)) {
             return false;
@@ -134,7 +134,7 @@ class Config
         $arr = explode('.', $key); //以'.'进行分隔
         $config = &self::$config;
         foreach ($arr as $k) {
-            !is_array($config[$k]) && $config[$k] = array();
+            !is_array($config[$k]) && $config[$k] = [];
             $config = &$config[$k];
         }
         $config = $val;

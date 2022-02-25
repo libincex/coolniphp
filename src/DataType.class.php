@@ -100,7 +100,7 @@ class DataType
 	public static function arr($val)
 	{
 		if(!is_array($val)){
-			return array();
+			return [];
 		}
 
 		return json_decode(json_encode($val),1);

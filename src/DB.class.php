@@ -8,11 +8,11 @@
 
 class DB
 {
-    private static $dbs = array(); //数据库操作实例
+    private static $dbs = []; //数据库操作实例
 
     //初始化,取得数据库操作实例,如果操作失败返回false
     //参数: $type 数据库类型(mysql、....), 需要配置对应的连接数据库信息
-    public static function init($type = 'mysqlx', $configKey = 'mysql')
+    public static function init(string $type = 'mysqlx', string $configKey = 'mysql')
     {
         $type = strtolower(trim($type));
         $configKey = trim($configKey);

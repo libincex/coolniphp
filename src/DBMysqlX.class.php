@@ -72,13 +72,13 @@ class DBMysqlX
     //主(写)库信息
     protected $master = array(
         'db' => NULL, //pdo 数据库连接实例
-        'info' => array(), //配置信息
+        'info' => [], //配置信息
     );
 
     //从(读)库信息
     protected $slave = array(
         'db' => NULL, //pdo 数据库连接实例
-        'info' => array(), //配置信息
+        'info' => [], //配置信息
     );
 
     //数据库连接配置信息
@@ -89,9 +89,9 @@ class DBMysqlX
     );
 
     //构造函数
-    function __construct($config = array())
+    function __construct($config = [])
     {
-        !is_array($config) && $config = array();
+        !is_array($config) && $config = [];
         if (!empty($config)) {
             //工作类型: 0 单库操作(不读写分离, 默认) , 1 执行读写分离配置
             //!empty($config['type']) && $this->config['type']=1;
@@ -115,11 +115,11 @@ class DBMysqlX
             }
 
             //从库 服务器列表
-            !is_array($config['slave']) && $config['slave'] = array();
+            !is_array($config['slave']) && $config['slave'] = [];
             if (empty($config['slave'])) {
                 $this->slave = $this->master;
             } else {
-                $sInfo = array();
+                $sInfo = [];
                 foreach ($config['slave'] as $s) {
                     if (!is_array($s) || empty($s)) {
                         continue;
@@ -194,7 +194,7 @@ class DBMysqlX
     }
 
     //数据库连接实例池
-    protected static $pdo = array();
+    protected static $pdo = [];
 
     //连接数据库
     //参数： $info 数据库配置信息 array(host, port, db, user, password)
@@ -238,13 +238,13 @@ class DBMysqlX
 
     //查询记录集(仅select,show等查询一类的语句
     //参数: sql语句模板, array(参数1,参数2...)
-    function query($sql, $data = array())
+    function query($sql, $data = [])
     {
         $startime = gettimeofday(true); //记录开始时间
 
         $sql = trim($sql);
         if (!is_array($data)) {
-            $data = isset($data) ? array(trim($data)) : array();
+            $data = isset($data) ? array(trim($data)) : [];
         }
 
         //执行sql
@@ -272,7 +272,7 @@ class DBMysqlX
             $this->error(array('SQL' => $sqlArr, 'ErrInfo' => $errInfo));
 
             //返回空数组
-            $rs = array();
+            $rs = [];
         } else {
             //执行成功
             $rs = $sth->fetchAll(PDO::FETCH_ASSOC); //取得记录集
@@ -301,7 +301,7 @@ class DBMysqlX
     protected $lastID; //最后插入行的ID
     protected $num; //受上一个 SQL 语句影响的行数
 
-    function run($sql, $data = array())
+    function run($sql, $data = [])
     {
         $startime = gettimeofday(true); //记录开始时间
 
@@ -338,7 +338,7 @@ class DBMysqlX
     }
 
     //获取数据库中 表名列表
-    protected $tableNames = array();
+    protected $tableNames = [];
 
     function tables()
     {
@@ -355,7 +355,7 @@ class DBMysqlX
 
 
     //获取数据表的 字段信息
-    protected $fields = array();
+    protected $fields = [];
 
     function fields($table)
     {
@@ -370,7 +370,7 @@ class DBMysqlX
             $result = $this->query("SHOW COLUMNS FROM `{$table}`");
 
             //整理字段信息
-            $info = array();
+            $info = [];
             if ($result) {
                 foreach ($result as $key => $val) {
                     //主键
@@ -400,7 +400,7 @@ class DBMysqlX
     }
 
     //创建表实例
-    //protected $tableDBs = array();
+    //protected $tableDBs = [];
     //完整表名
     function table($table, $as = '')
     {
@@ -436,7 +436,7 @@ class DBMysqlX
 
 
     //设置/获取错误
-    protected $error = array(); //记录最后一次执行SQL的错误信息
+    protected $error = []; //记录最后一次执行SQL的错误信息
 
     function error($error = NULL)
     {
@@ -457,7 +457,7 @@ class DBMysqlX
     }
 
     //获取日志
-    protected $log = array(); //执行的SQL日志记录
+    protected $log = []; //执行的SQL日志记录
 
     function log()
     {
@@ -569,20 +569,20 @@ class DBMysqlTable
 
     //where
     protected $where;
-    protected $wheredata = array();
+    protected $wheredata = [];
 
     function where($where, $data = NULL)
     {
         //数组型
         if (is_array($where)) {
-            $arr = $data = array();
+            $arr = $data = [];
             foreach ($where as $key => $val) {
                 if ($key == '_string') { //处理自定义的sql串
                     if (!empty($val)) {
                         if (is_array($val)) { //如果为数组
                             //第一个元素为 sql串
                             $v = trim(array_shift($val));
-                            if(!empty($v)){
+                            if (!empty($v)) {
                                 $arr[] = $v;
                                 //其它元素为值
                                 foreach ($val as $v) {
@@ -628,13 +628,13 @@ class DBMysqlTable
 
     //having
     protected $having;
-    protected $havingdata = array();
+    protected $havingdata = [];
 
     function having($having, $data = NULL)
     {
         //数组型
         if (is_array($having)) {
-            $arr = $data = array();
+            $arr = $data = [];
             foreach ($having as $key => $val) {
                 $arr[] = "`{$key}`=?";
                 $data[] = $val;
@@ -699,20 +699,20 @@ class DBMysqlTable
         $this->field = '*';
 
         $this->where = '';
-        $this->wheredata = array();
+        $this->wheredata = [];
 
         $this->group = '';
         $this->order = '';
         $this->limit = '';
 
         $this->having = '';
-        $this->havingdata = array();
+        $this->havingdata = [];
     }
 
     //获取参数
     function data()
     {
-        $data = array();
+        $data = [];
         foreach ($this->wheredata as $d) {
             $data[] = $d;
         }
@@ -735,7 +735,7 @@ class DBMysqlTable
 
         //是否使用主键
         if ($usePKey) {
-            $_rs = array();
+            $_rs = [];
             foreach ($rs as $r) {
                 $_rs[$r[$this->pk]] = $r;
             }
@@ -751,7 +751,7 @@ class DBMysqlTable
     {
         $this->limit(1);
         $rs = $this->getrs();
-        $r = is_array($rs[0]) ? $rs[0] : array();
+        $r = is_array($rs[0]) ? $rs[0] : [];
 
         return $r;
     }
@@ -763,7 +763,7 @@ class DBMysqlTable
         $field = trim($field);
 
         if (empty($this->pk)) {
-            return empty($field) ? array() : NULL;
+            return empty($field) ? [] : NULL;
         }
 
         $r = $this->where("`{$this->pk}`=?", array($id))->field($field)->getr();
@@ -827,7 +827,7 @@ class DBMysqlTable
                 'size' => (int)$size,
                 'page' => 1,
                 'pages' => 1,
-                'rs' => array(),
+                'rs' => [],
             );
         }
 
@@ -862,7 +862,7 @@ class DBMysqlTable
 
         //组织SQL
         $sql = "INSERT INTO {$this->table_as} SET ";
-        $data = array();
+        $data = [];
         foreach ($r as $key => $val) {
             $sql .= "`{$key}`=?,";
             $data[] = $val;
@@ -890,7 +890,7 @@ class DBMysqlTable
 
         //生成sql语句
         $sql = "REPLACE INTO {$this->table_as} SET ";
-        $data = array();
+        $data = [];
         foreach ($r as $key => $val) {
             $sql .= "`{$key}`=?,";
             $data[] = $val;
@@ -934,7 +934,7 @@ class DBMysqlTable
      * $id 主键的值
      * $fields 记录的各字段数组 array('字段名1'=>'字段值1',....)
      */
-    function setr($id, $fields = array())
+    function setr($id, $fields = [])
     {
         $id = trim($id);
         if (empty($id)) {
@@ -1009,14 +1009,14 @@ class DBMysqlTable
      * 例2: $bool = $db->delr(array(id1,id2,id3....)); //删除多条记录,参数类型数组 形式
      * 例3: $bool = $db->delr("id1,id2,id3,id4,...."); //删除多条记录,参数类型字符串列表 形式
      */
-    function delr($ids = array())
+    function delr($ids = [])
     {
         !is_array($ids) && $ids = explode(',', $ids);
         $ids = array_filter(array_unique(array_map('trim', $ids)));
         if (empty($ids)) {
             return false;
         }
-        $vpad = implode(',', array_pad(array(), count($ids), '?'));
+        $vpad = implode(',', array_pad([], count($ids), '?'));
 
         $this->reset(); //复位
         return $this->where("`{$this->pk}` IN({$vpad})", $ids)->del();
@@ -1088,7 +1088,7 @@ class DBMysqlTable
         //执行
         $sql = "SELECT * FROM {$this->table_as} WHERE `{$this->pk}`=? LIMIT 1 FOR UPDATE";
         $rs = $this->db->query($sql, array($id));
-        $r = is_array($rs[0]) ? $rs[0] : array();
+        $r = is_array($rs[0]) ? $rs[0] : [];
 
         return $r;
     }
@@ -1103,7 +1103,7 @@ class DBMysqlTable
         //执行
         $sql = "SELECT * FROM {$this->table_as} WHERE `{$this->pk}`=? LIMIT 1 LOCK IN SHARE MODE";
         $rs = $this->db->query($sql, array($id));
-        $r = is_array($rs[0]) ? $rs[0] : array();
+        $r = is_array($rs[0]) ? $rs[0] : [];
 
         return $r;
     }

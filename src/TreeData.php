@@ -9,7 +9,7 @@
 class TreeData
 {
     //数据
-    protected $data = array();
+    protected $data = [];
     //主键名
     protected $idName = '';
     //父键名
@@ -21,7 +21,7 @@ class TreeData
         $this->idName = trim($idName);
         $this->pidName = trim($pidName);
 
-        $this->data = array();
+        $this->data = [];
         foreach ($data as $r) {
             $this->data[$r[$idName]] = $r;
         }
@@ -52,7 +52,7 @@ class TreeData
     //计算出指定节点的路径
     function nodePath($id)
     {
-        $path = array();
+        $path = [];
         while (isset($this->data[$id])) {
             $path[] = $id; //记录节点id
             $id = $this->data[$id][$this->pidName];
@@ -64,7 +64,7 @@ class TreeData
     //获取孩子节点
     function children($id)
     {
-        $ids = array();
+        $ids = [];
         foreach ($this->data as $r) {
             if ($r[$this->pidName] == $id) {
                 $ids[] = $r[$this->idName];
@@ -77,7 +77,7 @@ class TreeData
     //获取全部子节点
     function allChildren($id)
     {
-        $ids = array();
+        $ids = [];
         foreach ($this->data as $r) {
             if ($r[$this->pidName] == $id) {
                 $ids[] = $r[$this->idName];

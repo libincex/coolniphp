@@ -1,7 +1,7 @@
 <?php
 /*//=================================
 //
-//	快捷函数 [更新时间: 2018-05-29]
+//	快捷函数 [更新时间: 2022-02-25]
 //
 //===================================*/
 
@@ -9,8 +9,13 @@
 //配置函数
 //==================================
 
-//取得或设置Config项内容
-function C($name, $value = NULL)
+/**
+ * 取得或设置Config项内容
+ * @param string $name
+ * @param null $value
+ * @return array|bool|mixed|null
+ */
+function C(string $name, $value = NULL)
 {
     $name = trim($name);
     if (empty($name)) {
@@ -26,9 +31,13 @@ function C($name, $value = NULL)
 //路由函数
 //==================================
 
-//快捷url,生成一个完整的url
-//特殊标识 '{M}','{C}','{A}' 分别代表当前的 module,controller,action
-function URL($uri = '')
+/**
+ * 快捷url,生成一个完整的url
+ * 特殊标识 '{M}','{C}','{A}' 分别代表当前的 module,controller,action
+ * @param string $uri
+ * @return string
+ */
+function URL(string $uri = '')
 {
     $mc = CLN_MODULE . '/' . CLN_CONTROLLER;
     $mca = CLN_MODULE . '/' . CLN_CONTROLLER . '/' . CLN_ACTION;
@@ -46,15 +55,21 @@ function URL($uri = '')
     return CLN_BASE_URL . $uri; //CLI工作模式中，入口文件与参数之间有空格
 }
 
-//生成带参数的url, 可以传入参数(如果参数的值为空empty(): 则会被过滤,不会生成在url中)
-function pURL($uri = '', $params = array())
+/**
+ * 生成带参数的url, 可以传入参数
+ * (如果参数的值为空empty(): 则会被过滤,不会生成在url中)
+ * @param string $uri
+ * @param array $params
+ * @return string
+ */
+function pURL(string $uri = '', array $params = [])
 {
     if (empty($uri)) {
-        $uri = implode('/', array(
+        $uri = implode('/', [
             CLN_MODULE,
             CLN_CONTROLLER,
             CLN_ACTION
-        ));
+        ]);
     }
     $uri{0} != '/' && $uri = '/' . $uri;
     if (is_array($params) && !empty($params)) {
@@ -68,8 +83,13 @@ function pURL($uri = '', $params = array())
     return CLN_BASE_URL . $uri;
 }
 
-//静态文件url, 生成一个静态文件完整的url
-function sURL($uri = '')
+
+/**
+ * 静态文件url, 生成一个静态文件完整的url
+ * @param string $uri
+ * @return string
+ */
+function sURL(string $uri = '')
 {
     $uri = trim($uri);
     if (empty($uri)) {
@@ -87,15 +107,22 @@ function sURL($uri = '')
     return $sUrl[array_rand($sUrl)] . $uri;
 }
 
-//上传的文件的url
-function fURL($uri = '')
+/**
+ * 上传的文件的url
+ * @param string $uri
+ * @return string
+ */
+function fURL(string $uri = '')
 {
     return File::url($uri);
 }
 
-//url跳转
-//参数:  $is301 是否永久跳转到指定网址
-function gourl($url, $is301 = false)
+/**
+ * url跳转
+ * @param string $url
+ * @param bool $is301 是否永久跳转到指定网址
+ */
+function gourl(string $url, $is301 = false)
 {
     $url = trim($url);
     if ($is301) {
@@ -113,25 +140,43 @@ function gourl($url, $is301 = false)
 //数据库操作
 //==================================
 
-//数据表操作对象
-function T($table, $as = '')
+/**
+ * 数据表操作对象
+ * @param string $table
+ * @param string $as
+ * @return mixed
+ */
+function T(string $table, string $as = '')
 {
     return DB::init()->table($table, $as);
 }
 
-//取得当前数据库中的表实例(适用于带前缀的表操作)
-function PT($table, $as = '')
+/**
+ * 取得当前数据库中的表实例(适用于带前缀的表操作)
+ * @param string $table
+ * @param string $as
+ * @return mixed
+ */
+function PT(string $table, string $as = '')
 {
     return DB::init()->ptable($table, $as);
 }
 
-//mysql的sql查询操作
+/**
+ * mysql的sql查询操作
+ * @param $sqlArr
+ * @return mixed
+ */
 function mysqlQuery($sqlArr)
 {
     return DB::init()->query($sqlArr);
 }
 
-//mysql的更新操作(非select)
+/**
+ * mysql的更新操作(非select)
+ * @param $sqlArr
+ * @return mixed
+ */
 function mysqlRun($sqlArr)
 {
     return DB::init()->run($sqlArr);
@@ -140,20 +185,31 @@ function mysqlRun($sqlArr)
 //视图函数
 //==================================
 
-//载入模板,并取得模板渲染之后的内容
-//参数: $tplFile 子模板文件, $tplData 传入子模板的数据(数组: ['变量名'=>'值']), $isDisplay 是否显示,默认为true,如果为false则仅返回渲染的模板内容
-function tpl($tplFile, $tplData = array(), $isDisplay = true)
+/**
+ * 载入模板,并取得模板渲染之后的内容
+ * @param string $tplFile 子模板文件
+ * @param array $tplData 传入子模板的数据(数组: ['变量名'=>'值'])
+ * @param bool $isDisplay 是否显示,默认为true,如果为false则仅返回渲染的模板内容
+ * @return string|void
+ */
+function tpl(string $tplFile, array $tplData = [], $isDisplay = true)
 {
     return View::tpl($tplFile, $tplData, $isDisplay);
 }
 
-//载入静态文件,js
+/**
+ * 载入静态文件,js
+ * @param $jsUrl
+ */
 function js($jsUrl)
 {
     View::loadJS($jsUrl);
 }
 
-//载入静态文件css
+/**
+ * 载入静态文件css
+ * @param $cssUrl
+ */
 function css($cssUrl)
 {
     View::loadCSS($cssUrl);
@@ -162,8 +218,14 @@ function css($cssUrl)
 //缓存相关
 //====================
 
-//取得或设置缓存内容
-function Cache($key, $value = NULL, $time = 0)
+/**
+ * 取得或设置缓存内容
+ * @param string $key
+ * @param null $value
+ * @param int $time
+ * @return mixed|null
+ */
+function Cache(string $key, $value = NULL, int $time = 0)
 {
     $key = trim($key);
     if (empty($key)) {
@@ -179,8 +241,12 @@ function Cache($key, $value = NULL, $time = 0)
 //调试函数
 //==================================
 
-//写入调试信息
-function Debug($key, $value)
+/**
+ * 写入调试信息
+ * @param string $key
+ * @param $value
+ */
+function Debug(string $key, $value)
 {
     Debug::put($key, $value);
 }
@@ -188,8 +254,13 @@ function Debug($key, $value)
 //session相关
 //==================================
 
-//获取/设置 session
-function S($key, $val = NULL)
+/**
+ * 获取/设置 session
+ * @param string $key
+ * @param null $val
+ * @return array|mixed
+ */
+function S(string $key, $val = NULL)
 {
     if (isset($val)) {
         return Session::set($key, $val);
@@ -201,38 +272,62 @@ function S($key, $val = NULL)
 //加密解密相关
 //================================
 
-//文本数据加密
-//参数: $expiry 密文有效期, 加密时候有效， 单位 秒，0 为永久有效， $key 指定用于解密的key(默认为AppID参数)
-function SEncode($val, $expiry = 0, $key = '')
+/**
+ * 文本数据加密
+ * @param $val
+ * @param int $expiry 密文有效期, 加密时候有效秒，0为永久有效
+ * @param string $key 指定用于解密的key(默认为AppID参数)
+ * @return string
+ */
+function SEncode($val, int $expiry = 0, string $key = '')
 {
     empty($key) && $key = CLN_ID;
-    return Security::AuthCode(serialize($val), 'ENCODE', $key, (int)$expiry);
+    return Security::AuthCode(serialize($val), 'ENCODE', $key, $expiry);
 }
 
-//文本数据解密
-//参数: $text 密文 , $key 指定用于解密的key(默认为AppID参数)
-function SDecode($text, $key = '')
+
+/**
+ * 文本数据解密
+ * @param string $text 密文
+ * @param string $key 指定用于解密的key(默认为AppID参数)
+ * @return mixed
+ */
+function SDecode(string $text, string $key = '')
 {
     empty($key) && $key = CLN_ID;
     return unserialize(Security::AuthCode(trim($text), 'DECODE', $key));
 }
 
-//新base64 编码, 可以安全用于url
-function Base64Encode($str)
+/**
+ * 新base64 编码, 可以安全用于url
+ * @param string $str
+ * @return mixed
+ */
+function Base64Encode(string $str)
 {
     //加密时将 +号转为-号，/号转成_号, 以便于在url中传输
-    return str_replace(array('+', '/'), array('-', '_'), trim(base64_encode($str), '='));
+    return str_replace(['+', '/'], ['-', '_'], trim(base64_encode($str), '='));
 }
 
-//新base64 解码, 可以安全用于url
-function Base64Decode($str)
+
+/**
+ * 新base64 解码, 可以安全用于url
+ * @param string $str
+ * @return bool|string
+ */
+function Base64Decode(string $str)
 {
     //解密时将 -号转回+号，_号转回/
     return base64_decode(str_replace(array('-', '_'), array('+', '/'), $str));
 }
 
-//短md5(16个字符,一般用于缓存时需要生成较短的key名)
-function md5_16($str)
+
+/**
+ * 短md5(16个字符,一般用于缓存时需要生成较短的key名)
+ * @param string $str
+ * @return bool|string
+ */
+function md5_16(string $str)
 {
     return substr(md5($str), 8, 16);
 }
@@ -240,9 +335,14 @@ function md5_16($str)
 //输入输出数据处理
 //=====================
 
-//将经过HTML编码的特殊字符转换回原字符
-//参数: $type 1 将特殊字符转换为HTML编码, -1 将HTML编码的特殊字符转换回字符(默认)
-function Html($text, $type = -1)
+/**
+ * 将经过HTML编码的特殊字符转换回原字符
+ *
+ * @param string $text
+ * @param int $type 1 将特殊字符转换为HTML编码, -1 将HTML编码的特殊字符转换回字符(默认)
+ * @return array
+ */
+function Html(string $text, int $type = -1)
 {
     $type = (int)$type;
     !in_array($type, array(-1, 1)) && $type = -1;
@@ -250,8 +350,12 @@ function Html($text, $type = -1)
     return Security::html($text, $type);
 }
 
-//返回json数据结果, 然后停止程序执行, 相当于 echo json_encode($data); exit; 的简写。
-//兼容跨域的jsonp操作( 如果传入的参数中有”callback”,则以jsonp输出数据 ), 可以用于api模式的接口快速输出数据
+
+/**
+ * 返回json数据结果, 然后停止程序执行, 相当于 echo json_encode($data); exit; 的简写。
+ * 兼容跨域的jsonp操作( 如果传入的参数中有”callback”,则以jsonp输出数据 ), 可以用于api模式的接口快速输出数据
+ * @param $data
+ */
 function JD($data)
 {
     $jsonp = trim(Router::data('callback'));
@@ -261,22 +365,25 @@ function JD($data)
     exit(empty($jsonp) ? $json : "{$jsonp}({$json})");
 }
 
-/*
-//对一组数据进行批量处理，更适合批量规划
-//格式化数组, 类型: 'int','text'
-//$formatList = array(
-	'类型名称'=>array(key1,key3,...), //将指定的一批key按规定的类型进行格式化 (或格式: 'key1,key3,....'
-	'int' => 'key2,key4,*', //将'key2'和'key4'做为'int'处理,将没有明确指出类型的数据项 全部转成 'int'
-	'text'=>'key3,key4', //批量将所有字段都做为“text”处理(除显示指定的'key1'与'key2'之外)
-    'float'=>'key5,key6', //将'key5'和'key6'做为'float'处理
-) */
-function DV($formatList = array(), $data = array())
+/**
+ * 对一组数据进行批量处理，更适合批量规划
+ * 格式化数组, 类型: 'int','text'
+ * $formatList = [
+ * '类型名称'=>[key1,key3,...], //将指定的一批key按规定的类型进行格式化 (或格式: 'key1,key3,....'
+ * 'int' => 'key2,key4,*', //将'key2'和'key4'做为'int'处理,将没有明确指出类型的数据项 全部转成 'int'
+ * 'text'=>'key3,key4', //批量将所有字段都做为“text”处理(除显示指定的'key1'与'key2'之外)
+ * 'float'=>'key5,key6', //将'key5'和'key6'做为'float'处理
+ * @param array $formatList
+ * @param array $data
+ * @return array|null
+ */
+function DV(array $formatList = [], array $data = [])
 {
-    if (empty($data) || !is_array($data)) {
+    if (empty($data)) {
         $data = Router::data();
         /*
-        $post = array();
-        $get = array();
+        $post = [];
+        $get = [];
         parse_str(trim(file_get_contents("php://input")), $post);
         $query_string = trim(empty($_SERVER['QUERY_STRING']) ? $_SERVER['query_string'] : $_SERVER['QUERY_STRING']);
         parse_str($query_string, $get);
@@ -291,7 +398,7 @@ function DV($formatList = array(), $data = array())
     }
 
     //数据项对应类型
-    $df = array();
+    $df = [];
     foreach ($formatList as $key => $val) {
         $key = trim(strtolower($key));
         if (!is_array($val)) {
@@ -318,7 +425,7 @@ function DV($formatList = array(), $data = array())
     unset($df['*']);
 
     //格式化数据
-    $redata = array();
+    $redata = [];
     foreach ($df as $v => $f) {
         switch ($f) {
             //整数 123345
@@ -356,7 +463,7 @@ function DV($formatList = array(), $data = array())
             case 'arr':
             case 'array':
                 if (!is_array($data[$v])) {
-                    $data[$v] = empty($data[$v]) ? array() : array($data[$v]);
+                    $data[$v] = empty($data[$v]) ? [] : [$data[$v]];
                 }
                 $redata[$v] = $data[$v];
                 break;
@@ -407,7 +514,7 @@ function DV($formatList = array(), $data = array())
  * 'phone' => '13312345678',
  * ));
  */
-function L($string, $tplData = array())
+function L(string $string, array $tplData = [])
 {
     return Language::translate($string, $tplData);
 }
@@ -417,71 +524,43 @@ function L($string, $tplData = array())
 //=====================
 
 
-//将字符串编码格式转成utf8
-function toUTF8($str)
+/**
+ * 将字符串编码格式转成utf8
+ * @param string $str
+ * @return string
+ */
+function toUTF8(string $str)
 {
     return mb_convert_encoding($str, 'UTF-8', 'ASCII,UTF-8,GBK,ISO-8859-1');
 }
 
-//mysql搜索值处理
-//转义 _, %
+
+/**
+ * ysql搜索值处理, 转义 _, %
+ * @param $value
+ * @return mixed
+ */
 function mysqlSearchValue($value)
 {
-    $value = str_replace(array(
+    $value = str_replace([
         '_', '%'
-    ), array(
+    ], [
         '\_', '\%',
-    ), $value);
+    ], $value);
 
     return $value;
 }
 
-
-//从数组中提出多列组成新的数组
-//(函数array_column的改进版)
-//参数：
-//$arr 二维数组，
-//$column 字段列表(支持字符串列表和数组列表)，
-//$index 指定做为新数据索引的字段值(默认为原数组的索引值)
-function arrayColumn($arr, $column, $index = NULL)
-{
-    !is_array($column) && $column = array_filter(array_map('trim', explode(',', $column)));
-    if (!is_array($arr) || empty($arr) || empty($column)) {
-        return $arr;
-    }
-    $index = trim($index);
-
-    $data = array();
-    foreach ($arr as $key => $val) {
-        if (!is_array($val)) {
-            $data[$key] = $val;
-            continue;
-        }
-
-        //提取列数据
-        $r = array();
-        foreach ($column as $c) {
-            $r[$c] = $val[$c];
-        }
-        //取得索引值
-        $k = empty($index) ? $key : $val[$index];
-
-        $data[$k] = $r;
-    }
-
-    return $data;
-}
-
-
-/*
+/**
  * 对二维数组排序(支持多字段排序)
- * 参数:
- * array $rs 记录集(二维数组)
  * array|string $sortRule 排序规则:
  * $sortRule = array('key1'=>'desc','key2'=>'asc',...); //数组
  * $sortRule = 'key1 desc,key2 asc,...'; //类SQL写法
+ * @param array $rs
+ * @param $sortRule
+ * @return array
  */
-function arraySort($rs, $sortRule)
+function arraySort(array $rs, $sortRule)
 {
     if (empty($rs) || !is_array($rs)) {
         return $rs; //原样返回
@@ -489,10 +568,10 @@ function arraySort($rs, $sortRule)
 
     //规则处理
     if (!is_array($sortRule)) {
-        $arr = array();
+        $arr = [];
         preg_match_all('/([^,^\s]+)\s+(desc|asc)/is', trim($sortRule), $arr);
 
-        $sortRule = array();
+        $sortRule = [];
         foreach ($arr[1] as $key => $val) {
             $sortRule[trim($val)] = trim($arr[2][$key]);
         }
@@ -506,7 +585,7 @@ function arraySort($rs, $sortRule)
     $sort = strtolower(array_shift($sortRule));
 
     //组织数据
-    $data = array(); //数据容器
+    $data = []; //数据容器
     foreach ($rs as $index => $r) {
         $data[$r[$key]][$index] = $r;
     }
@@ -522,7 +601,7 @@ function arraySort($rs, $sortRule)
     }
 
     //数据处理
-    $rs = array();
+    $rs = [];
     foreach ($data as $index => $d) {
         if (count($d) > 1 && !empty($sortRule)) {
             //递归处理二级排序
@@ -539,23 +618,59 @@ function arraySort($rs, $sortRule)
 }
 
 /**
- * 根据指定的keys列表，从源数组中获取元素值，返回生成的新的数组
- * @param $arr 源数组
+ * 从数组中提出多列组成新的数组(函数array_column的改进版)
+ * @param array $arr 二维数组
+ * @param $column 字段列表(支持字符串列表和数组列表)，
+ * @param string $index 指定做为新数据索引的字段值(默认为原数组的索引值)
+ * @return array
+ */
+function arrayColumn(array $arr, $column, string $index = '')
+{
+    !is_array($column) && $column = array_filter(array_map('trim', explode(',', $column)));
+    if (!is_array($arr) || empty($arr) || empty($column)) {
+        return $arr;
+    }
+    $index = trim($index);
+
+    $data = [];
+    foreach ($arr as $key => $val) {
+        if (!is_array($val)) {
+            $data[$key] = $val;
+            continue;
+        }
+
+        //提取列数据
+        $r = [];
+        foreach ($column as $c) {
+            $r[$c] = $val[$c];
+        }
+        //取得索引值
+        $k = empty($index) ? $key : $val[$index];
+
+        $data[$k] = $r;
+    }
+
+    return $data;
+}
+
+/**
+ * 从数组中提取keys列表对应的元素，组成新的数组
+ * @param array $arr 源数组(用于一维数组)
  * @param string $keys 数组key列表(逗号分隔)
  * @return array
  */
-function subArray($arr, $keys = '')
+function subArray(array $arr, string $keys = '')
 {
-    if (empty($arr) || !is_array($arr)) {
-        return array();
+    if (empty($arr)) {
+        return [];
     }
 
     $keys = array_filter(array_unique(array_map('trim', explode(',', $keys))));
     if (empty($keys)) {
-        return array();
+        return [];
     }
 
-    $newArr = array();
+    $newArr = [];
     foreach ($keys as $key) {
         isset($arr[$key]) && $newArr[$key] = $arr[$key];
     }
@@ -564,15 +679,15 @@ function subArray($arr, $keys = '')
 }
 
 /**
- * 从源数组中,将指定的keys列表中的下标无素删除，返回新的数组
- * @param $arr 源数组
+ * 去除数组中keys列表对应的元素，返回新数组
+ * @param array $arr 源数组(用于一维数组)
  * @param string $noKeys 要去掉的数组key列表(逗号分隔)
  * @return array
  */
-function notSubArray($arr, $noKeys = '')
+function notSubArray(array $arr, string $noKeys = '')
 {
-    if (empty($arr) || !is_array($arr)) {
-        return array();
+    if (empty($arr)) {
+        return [];
     }
 
     $noKeys = array_filter(array_unique(array_map('trim', explode(',', $noKeys))));
@@ -587,12 +702,16 @@ function notSubArray($arr, $noKeys = '')
     return $arr;
 }
 
-//根据传入的二维数组，生成一个html的表格
-//用于输出调试数据啥的，就很方便了
-function getTable($rs)
+/**
+ * 根据传入的二维数组，生成一个html的表格
+ * 用于输出调试数据啥的，就很方便了
+ * @param array $rs
+ * @return string
+ */
+function getTable(array $rs)
 {
     //先取得全部的字段名列表
-    $keys = array();
+    $keys = [];
     foreach ($rs as $r) {
         $_keys = array_keys($r);
         $keys = array_unique(array_merge($keys, $_keys));
@@ -623,16 +742,26 @@ function getTable($rs)
     return $html;
 }
 
-//是否在指定的闭区间之内
+/**
+ * 是否在指定的闭区间之内
+ * @param $val
+ * @param $left
+ * @param $right
+ * @return bool
+ */
 function between($val, $left, $right)
 {
     return $left <= $val && $val <= $right;
 }
 
-// 函数说明: 日期将设定格式转换成串返回,如果省略参数则取得系统当前日期时间
-// 转换字符串规则(不分大小写)：y为年,m为月,d为日,h为时,f为分,s为秒,i为毫秒微秒,w为星期,数字0为时间戳
-// 函数引用: $str=Now(['日期格式字符串'])
-function Now($str = 'y-m-d h:f:s')
+/**
+ * 日期将设定格式转换成串返回,如果省略参数则取得系统当前日期时间
+ * 转换字符串规则(不分大小写)：y为年,m为月,d为日,h为时,f为分,s为秒,i为毫秒微秒,w为星期,数字0为时间戳
+ * 函数引用: $str=Now(['日期格式字符串'])
+ * @param string $str
+ * @return string
+ */
+function Now(string $str = 'y-m-d h:f:s')
 {
     $reValue = ''; //定义返回值变量
     $str = trim($str);
@@ -696,14 +825,22 @@ function Now($str = 'y-m-d h:f:s')
     return $reValue;
 }
 
-//获取唯一的个随机字符串
+/**
+ * 获取唯一的个随机字符串
+ * @return string
+ */
 function ID()
 {
     return md5(uniqid(mt_rand(10000000, 99999999), true));
 }
 
-//迭代器, 参数与功能与array_walk_recursive函数相似
-//不同点，遍历中将执行的返回结果回写入到对应元素中
+/**
+ * 迭代器, 参数与功能与array_walk_recursive函数相似
+ * 不同点，遍历中将执行的返回结果回写入到对应元素中
+ * @param $arr
+ * @param $funcname
+ * @return array
+ */
 function Iterator(&$arr, $funcname)
 {
     if (!is_array($arr)) {
@@ -715,16 +852,23 @@ function Iterator(&$arr, $funcname)
     return $arr;
 }
 
-//获取中文“星期几”
-//参数: $time 时间戳
-function cnWeek($time)
+/**
+ * 获取中文“星期几”
+ * @param int $time 时间戳
+ * @return string
+ */
+function cnWeek(int $time)
 {
     $days = array('', '一', '二', '三', '四', '五', '六', '日');
     $n = date('N', $time);
     return '星期' . $days[$n];
 }
 
-//获取年龄(即: 给出的时间 到当前时间 的年数), 支持时间格式，和时间戳格式
+/**
+ * 获取年龄(即: 给出的时间 到当前时间 的年数), 支持时间格式，和时间戳格式
+ * @param $time
+ * @return bool|float|int
+ */
 function Age($time)
 {
     if (preg_match('/^[0-9]+$/', $time)) {
@@ -740,15 +884,21 @@ function Age($time)
     return abs(date('Y') - $year);
 }
 
-
-//检测字符串是否是正确的Email格式
-function isEmail($email)
+/**
+ * 检测字符串是否是正确的Email格式
+ * @param string $email
+ * @return false|int
+ */
+function isEmail(string $email)
 {
     return preg_match('/^[A-Za-z0-9_.-]+@([A-Za-z0-9_.-]+.)+[A-Za-z]{2,6}$/is', trim($email));
 }
 
-
-//检测字符串是否是正确的手机格式
+/**
+ * 检测字符串是否是正确的手机格式
+ * @param $mobile
+ * @return false|int
+ */
 function isMobile($mobile)
 {
     return preg_match('/^1[0-9]{10}$/', trim($mobile));
@@ -757,7 +907,10 @@ function isMobile($mobile)
 //环境
 //==========================
 
-//当前请求是否是来自ajax
+/**
+ * 当前请求是否是来自ajax
+ * @return bool
+ */
 function isAjax()
 {
     //检查系统信息
@@ -774,8 +927,10 @@ function isAjax()
     return trim($arr['X-Requested-With']) == 'XMLHttpRequest';
 }
 
-
-//当前是否是https协议
+/**
+ * 当前是否是https协议
+ * @return bool
+ */
 function isHttps()
 {
     $bool = (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == 'https')
@@ -787,13 +942,20 @@ function isHttps()
     return $bool;
 }
 
-//当前PHP工作模式是否是CLI
+/**
+ * 当前PHP工作模式是否是CLI
+ * @return bool
+ */
 function isCLI()
 {
     return strtolower(PHP_SAPI) === 'cli' || defined('STDIN');
 }
 
-//获取当前客户端ip
+
+/**
+ * 获取当前客户端ip
+ * @return string
+ */
 function ip()
 {
     if (isset($_SERVER)) {
@@ -817,8 +979,10 @@ function ip()
     return $realip;
 }
 
-
-//获取当前客户端 USER_AGENT
+/**
+ * 获取当前客户端 USER_AGENT
+ * @return string
+ */
 function ua()
 {
     return trim($_SERVER['HTTP_USER_AGENT']);
@@ -827,35 +991,58 @@ function ua()
 //并发锁功能(需要redis支持)
 //=====================
 
-//获取时间锁(进行时间方面的限定)
-//返回: 锁信息
+/**
+ * 获取时间锁(进行时间方面的限定)
+ * 返回: 锁信息
+ * @param $key
+ * @param int $expire
+ * @return mixed
+ */
 function lock($key, $expire = 60)
 {
     return Cache::init('redis')->lock($key, $expire);
 }
 
-//释放时间锁
-//说明: 在获取锁执行完业务逻辑后，需要调用此方法主动释锁
+/**
+ * 释放时间锁
+ * 说明: 在获取锁执行完业务逻辑后，需要调用此方法主动释锁
+ * @param $lock
+ * @return mixed
+ */
 function unlock($lock)
 {
     return Cache::init('redis')->unlock($lock);
 }
 
-//获取数值锁(进行数量方面的限定)
-//如果获取成功，则返回当前锁定的数量, 如果失败，则返回0
+
+/**
+ * 获取数值锁(进行数量方面的限定)
+ * 如果获取成功，则返回当前锁定的数量, 如果失败，则返回0
+ * @param $key
+ * @param int $num
+ * @return mixed
+ */
 function lockNum($key, $num = 1)
 {
     return Cache::init('redis')->lockNum($key, $num);
 }
 
-//释放一个数量锁
-//说明: 在获取锁执行完业务逻辑后，可以调用此方法主动释锁
+/**
+ * 释放一个数量锁
+ * 说明: 在获取锁执行完业务逻辑后，可以调用此方法主动释锁
+ * @param $key
+ * @return mixed
+ */
 function unlockNum($key)
 {
     return Cache::init('redis')->unlockNum($key);
 }
 
-//获取锁key的值(时间锁,数量锁)
+/**
+ * 获取锁key的值(时间锁,数量锁)
+ * @param $key
+ * @return mixed
+ */
 function lockVal($key)
 {
     return Cache::init('redis')->lockVal($key);

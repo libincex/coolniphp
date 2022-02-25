@@ -36,7 +36,7 @@ class CacheRedis extends Redis
     //=================================
 
     //设置
-    public function set($key, $val, $expire = 0)
+    public function set(string $key, $val, int $expire = 0)
     {
         $expire = (int)$expire;
         $val = serialize($val); //对数据进行序列化
@@ -50,7 +50,7 @@ class CacheRedis extends Redis
     }
 
     //读取
-    public function get($key)
+    public function get(string $key)
     {
         $data = parent::get($key);
 
@@ -59,7 +59,7 @@ class CacheRedis extends Redis
 
     //队列
     //=================================
-    public function lPush($key, $value)
+    public function lPush(string $key, $value)
     {
         return parent::lPush($key, serialize($value));
     }
@@ -89,7 +89,7 @@ class CacheRedis extends Redis
     //获取时间锁(进行时间方面的限定)
     //参数: $key 锁的标识, $expire 锁的最大时间(单位s,必须大于0)
     //返回: 如果获取成功,则返回锁信息数组(解锁时有用), 失败返回false
-    public function lock($key, $expire)
+    public function lock(string $key, int $expire)
     {
         $key = trim($key);
         $expire = (int)$expire;
@@ -130,7 +130,7 @@ class CacheRedis extends Redis
 
     //获取数量锁(进行数量方面的限定)
     //返回: 如果获取成功，则返回当前锁定的数量, 如果失败，则返回0
-    public function lockNum($key, $num)
+    public function lockNum(string $key, int $num)
     {
         $key = trim($key);
         $num = (int)$num;
@@ -169,7 +169,7 @@ class CacheRedis extends Redis
 
     //释放一个数量锁
     //说明: 在获取锁执行完业务逻辑后，可以调用此方法主动释锁
-    public function unlockNum($key)
+    public function unlockNum(string $key)
     {
         $key = trim($key);
         if (empty($key)) {
@@ -209,7 +209,7 @@ class CacheRedis extends Redis
     }
 
     //清除锁(时间锁,数量锁)
-    public function clearLock($key)
+    public function clearLock(string $key)
     {
         $vkey = 'RedisLock_' . trim($key);
         $val = $this->eval("return redis.call('DEL',KEYS[1])", array($vkey), 1);
@@ -219,7 +219,7 @@ class CacheRedis extends Redis
     }
 
     //获取锁key的值(时间锁,数量锁)
-    public function lockVal($key)
+    public function lockVal(string $key)
     {
         $vkey = 'RedisLock_' . trim($key);
         $val = $this->eval("return redis.call('GET',KEYS[1])", array($vkey), 1);

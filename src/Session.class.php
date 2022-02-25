@@ -45,7 +45,7 @@ class Session
         if (!self::$isInit) {
             self::$SessionTime = (int)C('session.lifeTime');
             self::$Domain = trim(C('session.domain'));
-            empty(self::$Domain) && self::$Domain = trim(array_shift(explode(':',$_SERVER['HTTP_HOST'])));
+            empty(self::$Domain) && self::$Domain = trim(array_shift(explode(':', $_SERVER['HTTP_HOST'])));
             self::$SecretKey = CLN_ID;
 
             //尝试从外部获取ID
@@ -135,7 +135,7 @@ class Session
         //取得
         $data = Cache::get($SKey);
         //var_dump($data);exit;
-        !is_array($data) && $data = array();
+        !is_array($data) && $data = [];
 
         $key = trim($key);
         return empty($key) ? $data : $data[$key];
