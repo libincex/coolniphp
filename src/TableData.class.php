@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TableData 二维数据表操作类
+ * Class TableData 二维数据表操作类
  */
 
 class TableData
@@ -15,10 +15,14 @@ class TableData
     //key-value 型数据
     protected $_config = []; //[key=>val,...]
 
+    //缓存
+    protected $_cacheKey = ''; //缓存key
+
     /**
      * 获取一个实例
-     * @param array $data
-     * @return TableData
+     * @param array $data 数据
+     * @param array ...$args 其它参数
+     * @return mixed
      */
     public static function getInterface(array $data = [], ...$args)
     {
@@ -84,16 +88,15 @@ class TableData
      */
     function setIndex(string $column)
     {
-        if (!in_array($column, $this->_columns)) {
-            //return false;
-        }
-
         $indexData = [];
-        foreach ($this->_data as $i => $d) {
-            $key = $d[$column];
-            $indexData[$key][] = $i;
-        }
 
+        //实际存在的字段才建立真实索引记录
+        if (in_array($column, $this->_columns)) {
+            foreach ($this->_data as $i => $d) {
+                $key = $d[$column];
+                $indexData[$key][] = $i;
+            }
+        }
         $this->_indexs[$column] = $indexData;
 
         //返回新建索引的元素数量
@@ -116,6 +119,7 @@ class TableData
 
     /**
      * 删除索引
+     * @param string $column
      */
     function delIndex(string $column)
     {
@@ -124,6 +128,8 @@ class TableData
 
     /**
      * 列名是否是索引
+     * @param string $column
+     * @return bool
      */
     function isIndex(string $column)
     {
@@ -148,11 +154,12 @@ class TableData
         return $this->_indexs[$column];
     }
 
+
     /**
      * 根据索引值，返回记录
-     * @param $indexValue 索引值
+     * @param mixed $indexValue 索引值
      * @param string|NULL $column 索引名称
-     * @return array|bool
+     * @return array|bool|mixed
      */
     function getByIndex($indexValue, string $column = NULL)
     {
@@ -184,16 +191,24 @@ class TableData
     //===============================
 
     /**
-     * 取得全部原始数据
+     * 取得符合规则的全部数据，如果参数为空 返回全部原始数据
+     * @param string $rule 规则表达式串：'1,68,666:888,999'
      * @return array
      */
-    function getAll()
+    function getAll(string $rule = '')
     {
-        return $this->_data;
+        if (empty($rule)) {
+            return $this->_data;
+        }
+
+        return [];
     }
 
     /**
      * 根据字段名查找记录
+     * @param string $column
+     * @param $val
+     * @return array|bool|mixed
      */
     function find(string $column, $val)
     {
@@ -229,7 +244,10 @@ class TableData
             return false;
         }
 
-        return TableData::getInterface($data);
+        $table = new TableData();
+        $table->load($data);
+
+        return $table;
     }
 
     /**
@@ -282,8 +300,9 @@ class TableData
 
     /**
      * 取得指定列的值区间范围内的记录
-     * @param int $index
-     * @param int $num
+     * @param $column
+     * @param $start
+     * @param $end
      * @return array|bool
      */
     function getByBetween($column, $start, $end)
@@ -315,7 +334,29 @@ class TableData
         return $this->_data[$this->count() - 1];
     }
 
-    //用游标操作数据(用于数据遍历)
+    /**
+     * @param array $format 格式规则，见DV()函数的参数
+     * @return bool|TableData
+     */
+    function getByFormat(array $format)
+    {
+        if (empty($format)) {
+            return false;
+        }
+
+        $data = [];
+        foreach ($this->_data as $d) {
+            $data[] = DV($format, $d);
+        }
+
+        $table = new TableData();
+        $table->load($data);
+
+        return $table;
+    }
+
+
+    //用游标操作数据(一般用于时间序列的数据遍历)
     //===============================
 
     /**
@@ -389,7 +430,7 @@ class TableData
      */
     function add(array $row)
     {
-        //取得列名
+        //合并列名
         $keys = array_keys($row);
         $this->_columns = array_unique(array_merge($this->_columns, $keys));
 
@@ -416,6 +457,10 @@ class TableData
         }
         $this->_data[$index] = $row;
 
+        //合并列名
+        $keys = array_keys($row);
+        $this->_columns = array_unique(array_merge($this->_columns, $keys));
+
         //刷新各索引
         $this->refreshIndex();
 
@@ -433,7 +478,9 @@ class TableData
 
         //重新建立主索引
         $this->_data = array_values($this->_data);
-        $this->refreshIndex(); //刷新各索引
+
+        //刷新各索引
+        $this->refreshIndex();
 
         return $this;
     }
@@ -563,6 +610,7 @@ class TableData
 
     /**
      * 缓存数据
+     * @param string $key
      * @param int $exptime
      * @return mixed|null
      */
@@ -641,7 +689,7 @@ class TableData
 
         $csv = '';
         foreach ($data as $d) {
-            $csv += implode(',', $d) . " \n";
+            $csv .= implode(',', $d) . " \n";
         }
 
         return $csv;
@@ -652,6 +700,7 @@ class TableData
 
     /**
      * 设置config数据
+     * @param array $config
      */
     function setConfig(array $config)
     {
@@ -662,6 +711,7 @@ class TableData
 
     /**
      * 获取所有config数据
+     * @return array
      */
     function getConfig()
     {
@@ -672,7 +722,9 @@ class TableData
     //====================================
 
     /**
-     * 在给不可访问属性赋值时会被调用。
+     * 在给不可访问属性赋值时会被调用
+     * @param string $name
+     * @param $value
      */
     function __set(string $name, $value)
     {
@@ -680,7 +732,9 @@ class TableData
     }
 
     /**
-     * 读取不可访问属性的值时会被调用。
+     * 读取不可访问属性的值时会被调用
+     * @param string $name
+     * @return mixed
      */
     function __get(string $name)
     {
