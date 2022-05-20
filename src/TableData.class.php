@@ -18,6 +18,9 @@ class TableData
     //缓存
     protected $_cacheKey = ''; //缓存key
 
+    //开启自动更新索引
+    protected $_autoRefreshIndex = true;
+
     /**
      * 获取一个实例
      * @param array $data 数据
@@ -54,8 +57,10 @@ class TableData
             }
         }
 
-        //刷新各索引
-        $this->refreshIndex();
+        //自动刷新索引
+        if ($this->_autoRefreshIndex) {
+            $this->refreshIndex();
+        }
 
         return $this;
     }
@@ -104,7 +109,24 @@ class TableData
     }
 
     /**
-     * 重新建立索引数据
+     * 设置是否自动刷新索引
+     * @param bool $isAuto
+     * @return bool
+     */
+    function autoRefreshIndex(bool $isAuto = true)
+    {
+        $this->_autoRefreshIndex = false;
+
+        if ($isAuto) {
+            //刷新
+            $this->refreshIndex();
+        }
+
+        return $this->_autoRefreshIndex;
+    }
+
+    /**
+     * 刷新索引数据
      */
     function refreshIndex()
     {
@@ -438,8 +460,10 @@ class TableData
         $index = $this->count();
         $this->_data[$index] = $row;
 
-        //刷新各索引
-        $this->refreshIndex();
+        //自动刷新索引
+        if ($this->_autoRefreshIndex) {
+            $this->refreshIndex();
+        }
 
         return $index;
     }
@@ -461,8 +485,10 @@ class TableData
         $keys = array_keys($row);
         $this->_columns = array_unique(array_merge($this->_columns, $keys));
 
-        //刷新各索引
-        $this->refreshIndex();
+        //自动刷新索引
+        if ($this->_autoRefreshIndex) {
+            $this->refreshIndex();
+        }
 
         return $this;
     }
@@ -479,8 +505,10 @@ class TableData
         //重新建立主索引
         $this->_data = array_values($this->_data);
 
-        //刷新各索引
-        $this->refreshIndex();
+        //自动刷新索引
+        if ($this->_autoRefreshIndex) {
+            $this->refreshIndex();
+        }
 
         return $this;
     }
