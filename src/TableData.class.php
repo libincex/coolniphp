@@ -322,12 +322,12 @@ class TableData
 
     /**
      * 取得指定列的值区间范围内的记录
-     * @param $column
+     * @param string $column
      * @param $start
      * @param $end
-     * @return array|bool
+     * @return bool|mixed
      */
-    function getByBetween($column, $start, $end)
+    function getByBetween(string $column, $start, $end)
     {
         if (!in_array($column, $this->_columns)) {
             return false;
@@ -340,7 +340,7 @@ class TableData
             }
         }
 
-        return $data;
+        return self::getInterface($data);
     }
 
     /**
