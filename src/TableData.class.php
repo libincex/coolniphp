@@ -24,13 +24,12 @@ class TableData
     /**
      * 获取一个实例
      * @param array $data 数据
-     * @param array ...$args 其它参数
      * @return mixed
      */
-    public static function getInterface(array $data = [], ...$args)
+    public static function getInterface(array $data = [])
     {
         $class = get_called_class();
-        $table = new $class(...$args);
+        $table = new $class();
 
         //载入数据
         !empty($data) && $table->load($data);
