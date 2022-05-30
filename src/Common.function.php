@@ -38,7 +38,7 @@ function addLibPath(string $libPath)
     //获取
     $libPathArr = C('libPath');
     //添加
-    $libPathArr[] = $libPath;
+    !in_array($libPath, $libPathArr) && $libPathArr[] = $libPath;
     //保存
     return C('libPath', array_unique($libPathArr));
 }
