@@ -1,7 +1,7 @@
 <?php
 /*//=================================
 //
-//	快捷函数 [更新时间: 2022-02-25]
+//	快捷函数 [更新时间: 2022-05-30]
 //
 //===================================*/
 
@@ -26,6 +26,21 @@ function C(string $name, $value = NULL)
     } else {
         return Config::get($name); //获取
     }
+}
+
+/**
+ * 添加自动载入路径
+ * @param string $libPath
+ * @return array|bool|mixed|null
+ */
+function addLibPath(string $libPath)
+{
+    //获取
+    $libPathArr = C('libPath');
+    //添加
+    $libPathArr[] = $libPath;
+    //保存
+    return C('libPath', array_unique($libPathArr));
 }
 
 //路由函数
