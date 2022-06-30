@@ -20,7 +20,7 @@ class Config
             //环境设置:
             //======================================
             //设置内存
-            empty($config['memory']) && ini_set('memory_limit', $config['memory']);
+            !empty($config['memory']) && ini_set('memory_limit', $config['memory']);
 
             //设置时区
             empty($config['timezone']) && $config['timezone'] = 'Asia/Shanghai';

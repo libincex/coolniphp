@@ -408,7 +408,7 @@ class TableData
     }
 
     /**
-     * 获取下一个元素,如果到达结尾就返回 false
+     * 将游标移到下一个元素,如果到达结尾就返回 false
      * @return bool
      */
     function next()
